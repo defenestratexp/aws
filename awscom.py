@@ -132,7 +132,32 @@ def getversion(private_ip):
         targetlist = item.split()
         mysoftwareversion = targetlist[2]
   return mysoftwareversion
-        
+
+#Function to get the zoo from the tag metadata
+def getzoo(private_ip):
+
+  #Command setup
+  LOCAL_AWS = 'aws'
+  LOCAL_AWS_SERVICE = 'ec2'
+  LOCAL_AWS_ARG1 = 'describe-instances'
+  DRYRUN = '--dry-run'
+  LOCAL_AWS_ARG2 = '--filters'
+  LOCAL_AWS_ARG3 = 'Name=private-ip-address,Values=%s' % private_ip
+
+  #Command execution
+  procout = subprocess.Popen([LOCAL_AWS, LOCAL_AWS_SERVICE, LOCAL_AWS_ARG1, LOCAL_AWS_ARG2, LOCAL_AWS_ARG3],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+  myset = list(procout.stdout)
+
+  #Iterate through the line items
+  for item in myset:
+    searchstr = 'TAGS'
+    if searchstr in item:
+      searchstr2 = 'Zoo'
+      if searchstr2 in item:
+        targetlist = item.split()
+        myzooname = targetlist[2]
+
+  return myzooname
   
   
 
