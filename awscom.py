@@ -31,7 +31,8 @@ def getall(private_ip):
   #Command execution
   procout = subprocess.Popen([LOCAL_AWS, LOCAL_AWS_SERVICE, LOCAL_AWS_ARG1, LOCAL_AWS_ARG2, LOCAL_AWS_ARG3],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
   myset=list(procout.stdout)
-  print myset
+  for item in myset:
+    print item.split()
 
 # Function to obtain an instance-id
 def getid(private_ip):
@@ -47,10 +48,16 @@ def getid(private_ip):
   #Command execution
   procout = subprocess.Popen([LOCAL_AWS, LOCAL_AWS_SERVICE, LOCAL_AWS_ARG1, LOCAL_AWS_ARG2, LOCAL_AWS_ARG3],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
   myset=list(procout.stdout)
-  mytargetline = re.sub(r'\s+', ' ', myset[2])
-  mytargetlist = mytargetline.split()
-  myinstanceid = mytargetlist[7]
-  return myinstanceid
+  for item in myset:
+    searchstr = 'INSTANCES'
+    if searchstr in item:
+      targetlist = item.split()
+      myinstanceid = targetlist[7]
+      print myinstanceid
+  #mytargetline = re.sub(r'\s+', ' ', myset[2])
+  #mytargetlist = mytargetline.split()
+  #myinstanceid = mytargetlist[7]
+  #return myinstanceid
   
 
 
