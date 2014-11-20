@@ -185,6 +185,24 @@ def getenv(private_ip):
 
   return myenvname
 
+#Function to disable the api-termination flag
+def termflag(private_ip):
+
+  #Get the instance-id
+  TARGETHOSTID = getid(private_ip)
+
+  #Command setup
+  LOCAL_AWS = 'aws'
+  LOCAL_AWS_SERVICE = 'ec2'
+  LOCAL_AWS_ARG1 = 'modify-instance-attribute'
+  DRYRUN = '--dry-run'
+  LOCAL_AWS_ARG2 = '--instance-id'
+  LOCAL_AWS_ARG3 = '--disable-api-termination'
+  LOCAL_AWS_ARG4 = "{\"Value\": false}"
+  #print "Command would be", LOCAL_AWS, LOCAL_AWS_SERVICE, LOCAL_AWS_ARG1, LOCAL_AWS_ARG2, DRYRUN, LOCAL_AWS_ARG3, TARGETHOSTID, LOCAL_AWS_ARG4
+  subprocess.call([LOCAL_AWS, LOCAL_AWS_SERVICE, LOCAL_AWS_ARG1, LOCAL_AWS_ARG2, TARGETHOSTID, LOCAL_AWS_ARG3, LOCAL_AWS_ARG4])
+  
+
 
   
   
