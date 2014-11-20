@@ -85,6 +85,29 @@ def getname(private_ip):
       myinstancename = targetlist[2]
   return myinstancename
 
+def getstate(private_ip):
+
+  #Command setup
+  LOCAL_AWS = 'aws'
+  LOCAL_AWS_SERVICE = 'ec2'
+  LOCAL_AWS_ARG1 = 'describe-instances'
+  DRYRUN = '--dry-run'
+  LOCAL_AWS_ARG2 = '--filters'
+  LOCAL_AWS_ARG3 = 'Name=private-ip-address,Values=%s' % private_ip
+
+  #Command execution
+  procout = subprocess.Popen([LOCAL_AWS, LOCAL_AWS_SERVICE, LOCAL_AWS_ARG1, LOCAL_AWS_ARG2, LOCAL_AWS_ARG3],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+  myset = list(procout.stdout)
+
+  #Iterate through line items
+  for item in myset:
+    searchstr = 'STATE'
+    if searchstr in item:
+      targetlist = item.split()
+      myinstancestate = targetlist[2]
+  return myinstancestate
+  
+
 ##########################
 #### END FUNCTON DEFS ####
 ##########################
