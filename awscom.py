@@ -186,7 +186,7 @@ def getenv(private_ip):
   return myenvname
 
 #Function to disable the api-termination flag
-def termflag(private_ip):
+def termflagbyip(private_ip):
 
   #Get the instance-id
   TARGETHOSTID = getid(private_ip)
@@ -199,13 +199,52 @@ def termflag(private_ip):
   LOCAL_AWS_ARG2 = '--instance-id'
   LOCAL_AWS_ARG3 = '--disable-api-termination'
   LOCAL_AWS_ARG4 = "{\"Value\": false}"
-  #print "Command would be", LOCAL_AWS, LOCAL_AWS_SERVICE, LOCAL_AWS_ARG1, LOCAL_AWS_ARG2, DRYRUN, LOCAL_AWS_ARG3, TARGETHOSTID, LOCAL_AWS_ARG4
+ 
+  #Command Execution 
   subprocess.call([LOCAL_AWS, LOCAL_AWS_SERVICE, LOCAL_AWS_ARG1, LOCAL_AWS_ARG2, TARGETHOSTID, LOCAL_AWS_ARG3, LOCAL_AWS_ARG4])
-  
+ 
+#Function to disable the api-termination flag by instance-id
+def termflagbyid(instanceid) 
 
+  #Command setup
+  LOCAL_AWS = 'aws'
+  LOCAL_AWS_SERVICE = 'ec2'
+  LOCAL_AWS_ARG1 = 'modify-instance-attribute'
+  DRYRUN = '--dry-run'
+  LOCAL_AWS_ARG3 = '--disable-api-termination'
+  LOCAL_AWS_ARG4 = "{\"Value\": false}"
+ 
+  #Command Execution 
+  subprocess.call([LOCAL_AWS, LOCAL_AWS_SERVICE, LOCAL_AWS_ARG1, instanceid, TARGETHOSTID, LOCAL_AWS_ARG3, LOCAL_AWS_ARG4])
 
-  
-  
+#Function to terminate an instance identified by its instance-id
+def termbyid(instanceid):
+
+  #Enable api-termination by setting the flag to false
+  termflagbyid(instanceid)
+
+  #Command setup
+  LOCAL_AWS = 'aws'
+  LOCAL_AWS_SERVICE = 'ec2'
+  LOCAL_AWS_ARG1 = 'terminate-instances'
+  DRYRUN = '--dry-run'
+  LOCAL_AWS_ARG2 = '--instance-ids'
+  LOCAL_AWS_IDLIST = instanceid
+
+  #Command execution
+  subprocess.call([LOCAL_AWS, LOCAL_AWS_SERVICE, LOCAL_AWS_ARG1, LOCAL_AWS_ARG2, LOCAL_AWS_IDLIST])
+
+#Function to terminate an instance identified by its private ip address
+def termbyip(private_ip):
+ 
+  #Retrieve instance-id
+  mytargetid = getid(private_ip) 
+
+  #Enable api-termination flag
+  termflagbyid(mytargetid)
+
+  #Pass host to termbyid
+  termbyid(mytargetid)
 
 ##########################
 #### END FUNCTON DEFS ####
