@@ -63,7 +63,7 @@ def getid(private_ip):
 def getname(private_ip):
 
   #Obtain instance id
-  myinstanceid = getid(private_ip)
+  #myinstanceid = getid(private_ip)
 
   #Command setup
   LOCAL_AWS = 'aws'
