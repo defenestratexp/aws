@@ -17,8 +17,8 @@ import re
 #### FUNCTION DEFINITIONS ####
 ##############################
 
-# Function to obtain all instance information
-def getall(private_ip):
+# Function to obtain all instance information by the private ip
+def getallbyip(private_ip):
   
   #Command setup
   LOCAL_AWS = 'aws'
@@ -34,8 +34,8 @@ def getall(private_ip):
   for item in myset:
     print item.split()
 
-# Function to obtain an instance-id
-def getid(private_ip):
+# Function to obtain an instance-id by the private ip
+def getidbyip(private_ip):
 
   #Command setup
   LOCAL_AWS = 'aws'
@@ -54,13 +54,34 @@ def getid(private_ip):
     if searchstr in item:
       targetlist = item.split()
       myinstanceid = targetlist[7]
-  #mytargetline = re.sub(r'\s+', ' ', myset[2])
-  #mytargetlist = mytargetline.split()
-  #myinstanceid = mytargetlist[7]
   return myinstanceid
+
+# Function to obtain instance-id by using the Value of the Tag: Name
+def getidbyname(nametag):
+
+  #Command setup
+  LOCAL_AWS = 'aws'
+  LOCAL_AWS_SERVICE = 'ec2'
+  LOCAL_AWS_ARG1 = 'describe-tags'
+  DRYRUN = '--dry-run'
+  LOCAL_AWS_ARG2 = '--filters'
+  LOCAL_AWS_ARG3 = 'Name=key,Values=Name'
+  LOCAL_AWS_ARG4 = 'Name=value,Values=%s' % nametag
+
+  #Command execution
+  procout = subprocess.Popen([LOCAL_AWS, LOCAL_AWS_SERVICE, LOCAL_AWS_ARG1, LOCAL_AWS_ARG2, LOCAL_AWS_ARG3, LOCAL_AWS_ARG4],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+  myset=list(procout.stdout)
+
+  #Conversion
+  for item in myset:
+    targetlist=item.split()
+    instanceid = targetlist[2]
   
-# Function to obtain the instance name
-def getname(private_ip):
+  return instanceid
+  
+
+# Function to obtain the instance name by private ip
+def getnamebyip(private_ip):
 
   #Obtain instance id
   #myinstanceid = getid(private_ip)
@@ -85,7 +106,7 @@ def getname(private_ip):
       myinstancename = targetlist[2]
   return myinstancename
 
-# Function to get the machine state
+# Function to get the machine state by private ip
 def getstate(private_ip):
 
   #Command setup
@@ -108,8 +129,8 @@ def getstate(private_ip):
       myinstancestate = targetlist[2]
   return myinstancestate
 
-# Function to get the automate version from tag/metadata
-def getversion(private_ip):
+# Function to get the automate version from tag/metadata by private ip
+def getversionbyip(private_ip):
   
   #Command setup
   LOCAL_AWS = 'aws'
@@ -133,8 +154,8 @@ def getversion(private_ip):
         mysoftwareversion = targetlist[2]
   return mysoftwareversion
 
-#Function to get the zoo from the tag metadata
-def getzoo(private_ip):
+#Function to get the zoo from the tag metadata by private ip
+def getzoobyip(private_ip):
 
   #Command setup
   LOCAL_AWS = 'aws'
@@ -159,8 +180,8 @@ def getzoo(private_ip):
 
   return myzooname
 
-#Function to get the Environment from the tag metadata
-def getenv(private_ip):
+#Function to get the Environment from the tag metadata by private ip
+def getenvbyip(private_ip):
 
   #Command setup
   LOCAL_AWS = 'aws'
@@ -185,6 +206,29 @@ def getenv(private_ip):
 
   return myenvname
 
+#Function to get the instance type by private ip
+def gettypebyip(private_ip):
+
+  #Command setup
+  LOCAL_AWS = 'aws'
+  LOCAL_AWS_SERVICE = 'ec2'
+  LOCAL_AWS_ARG1 = 'describe-instances'
+  DRYRUN = '--dry-run'
+  LOCAL_AWS_ARG2 = '--filters'
+  LOCAL_AWS_ARG3 = 'Name=private-ip-address,Values=%s' % private_ip
+
+  #Command execution
+  procout = subprocess.Popen([LOCAL_AWS, LOCAL_AWS_SERVICE, LOCAL_AWS_ARG1, LOCAL_AWS_ARG2, LOCAL_AWS_ARG3],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+  myset = list(procout.stdout)
+
+  #Iteratethrough the line items
+  for item in myset:
+    searchstr = 'INSTANCES'
+    if searchstr in item:
+      targetlist = item.split()
+      myinstancetype = targetlist[8]
+  return myinstancetype
+
 #Function to disable the api-termination flag
 def termflagbyip(private_ip):
 
@@ -204,7 +248,7 @@ def termflagbyip(private_ip):
   subprocess.call([LOCAL_AWS, LOCAL_AWS_SERVICE, LOCAL_AWS_ARG1, LOCAL_AWS_ARG2, TARGETHOSTID, LOCAL_AWS_ARG3, LOCAL_AWS_ARG4])
  
 #Function to disable the api-termination flag by instance-id
-def termflagbyid(instanceid) 
+def termflagbyid(instanceid):
 
   #Command setup
   LOCAL_AWS = 'aws'
